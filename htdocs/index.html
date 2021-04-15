@@ -1,0 +1,70 @@
+<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=$tag_value(charset)" />
+	<title>$tag_value(script_title)</title>
+<style type="text/css">
+<!--
+	A { text-decoration: none }
+	#mainmenu { font-family: verdana; font-size: 8pt; font-weight: bold; text-decoration: none; color: black; }
+	#mainmenu a:link { color: #0000FF }
+	#mainmenu a:visited { color: #0000FF }
+	#mainmenu a:hover { color: #800080 }
+	#submenu { font-family: verdana; font-size: 8pt; text-decoration: none; color: black; }
+	#submenu a:link { color: #0000FF }
+	#submenu a:visited { color: #0000FF }
+	#submenu a:hover { color: #800080 }
+	#currmenu { font-family: verdana; font-size: 8pt; font-weight: bold; text-decoration: none; color: black; }
+	#currmenu a:link { color: #800080 }
+	#currmenu a:visited { color: #800080 }
+	#currmenu a:hover { color: #800080 }
+	#header { font-family: verdana; font-size: 8pt; font-weight: bold; text-decoration: none; color: black; }
+	#body { font-family: verdana; font-size: 8pt; text-decoration: none; color: black; }
+	#body a:link { color: #0000FF }
+	#body a:visited { color: #0000FF }
+	#body a:hover { color: #800080 }
+	#error { font-family: verdana; font-size: 8pt; text-decoration: bold; color: red; }
+	#copyright { font-family: verdana; font-size: 8pt; text-decoration: bold; color: black; }
+	#copyright a:link { color: #0000FF }
+	#copyright a:visited { color: #0000FF }
+	#copyright a:hover { color: #800080 }
+-->
+</style>
+	</head>
+	<body>
+		<table border="0" width="750" cellspacing="0" align="center">
+			<tr><td colspan="2"><hr noshade="noshade" size="0"/></td></tr>
+			<tr>
+			<td valign="top" nowrap="nowrap">
+			<menu compact="compact">
+$tag_for(main_menu)
+$tag_if($tag_eq($tag_item(menu), $tag_value(menu)))
+			<li><div id="currmenu"><a href="$tag_value(script_url)?menu=$tag_item(menu)&template=$tag_item(template)">$tag_item(name)</a></div></li>
+$tag_else
+			<li><div id="mainmenu"><a href="$tag_value(script_url)?menu=$tag_item(menu)&template=$tag_item(template)">$tag_item(name)</a></div></li>
+$tag_end
+$tag_if($tag_eq($tag_item(menu), $tag_value(menu)))
+			<menu compact="compact">
+$tag_for($tag_item(sub_menu))
+$tag_if($tag_eq($tag_item(menu), $tag_value(action)))
+			<li><div id=currmenu><a href="$tag_value(script_url)?menu=$tag_item(main_menu, menu)&action=$tag_item(menu)&template=$tag_item(template)">$tag_item(name)</a></div></li>
+$tag_else
+			<li><div id=submenu><a href="$tag_value(script_url)?menu=$tag_item(main_menu, menu)&action=$tag_item(menu)&template=$tag_item(template)">$tag_item(name)</a></div></li>
+$tag_end
+$tag_end
+			</menu>
+$tag_end
+$tag_end
+			</menu>
+			</td>
+			<td align="left" valign="top" class="content">
+			<form method="POST" action="$tag_value(script_url)">
+			<input type="hidden" name="menu" value="$tag_value(menu)">
+			<input type="hidden" name="action" value="$tag_value(action)">
+$tag_include($tag_value(template))
+			</form>
+			</td>
+			</tr>
+			<tr><td colspan="2"><hr noshade="noshade" size="0"/></td></tr>
+		</table>
+	</body>
+</html>

@@ -1,0 +1,86 @@
+
+<div id="header">Certificate Authority Settings</div>
+<input type="hidden" name="template" value="$tag_value(template)">
+
+<blockquote><div id="body">
+From here you can configure CA parameters for CA operations.  Once set, the parameter will then
+be used to perform CA functionality implemented by EPS.
+
+<br><br>
+To continue, please complete the following form.
+</id></blockquote>
+
+<blockquote><table border=0 cellspacing=1 cellpadding=1>
+<tr>
+	<td height="40" width=100%><div id="header">CA Parameters</div></td>
+</tr>
+$tag_for(ca_conf)
+$tag_if($tag_eq($tag_item(group), ca))
+$tag_if($tag_and($tag_neq($tag_item(type), fixed), $tag_neq($tag_item(type), hidden)))
+<tr>
+	<td valign=top width=40%>
+$tag_if($tag_or($tag_eq($tag_item(error), required), $tag_eq($tag_item(error), syntax)))
+		<div id="error">$tag_item(name)</div>
+$tag_else
+		<div id="body">$tag_item(name)</div>
+$tag_end
+	</td>
+	<td valign=top width=60%>
+$tag_if($tag_eq($tag_item(type), select))
+	<select name="$tag_item(param)">
+$tag_for($tag_item(choice))
+$tag_if($tag_eq($tag_item(value), $tag_item(ca_conf, value)))
+	<option value="$tag_item(value)" selected>$tag_item(name)</option>
+$tag_else
+	<option value="$tag_item(value)">$tag_item(name)</option>
+$tag_end
+$tag_end
+	</select>
+$tag_else
+	<input type=$tag_item(type) name="$tag_item(param)" value="$tag_item(value)" size=32 maxlength=$tag_item(size)>
+$tag_end
+	</td>
+</tr>
+$tag_end
+$tag_end
+$tag_end
+</table></blockquote>
+
+<blockquote><table border=0 cellspacing=1 cellpadding=1>
+<tr>
+	<td height="40" width=100%><div id="header">Request Properties</div></td>
+</tr>
+$tag_for(ca_conf)
+$tag_if($tag_eq($tag_item(group), req))
+$tag_if($tag_and($tag_neq($tag_item(type), fixed), $tag_neq($tag_item(type), hidden)))
+<tr>
+$tag_if($tag_or($tag_eq($tag_item(error), required), $tag_eq($tag_item(error), syntax)))
+	<td valign=top width=40%><div id="error">$tag_item(name)</div></td>
+$tag_else
+	<td valign=top width=40%><div id="body">$tag_item(name)</div></td>
+$tag_end
+	<td valign=top width=60%>
+$tag_if($tag_eq($tag_item(type), select))
+	<select name="$tag_item(param)">
+$tag_for($tag_item(choice))
+$tag_if($tag_eq($tag_item(value), $tag_item(ca_conf, value)))
+	<option value="$tag_item(value)" selected>$tag_item(name)</option>
+$tag_else
+	<option value="$tag_item(value)">$tag_item(name)</option>
+$tag_end
+$tag_end
+	</select>
+$tag_else
+	<input type=$tag_item(type) name="$tag_item(param)" value="$tag_item(value)" size=32 maxlength=$tag_item(size)>
+$tag_end
+	</td>
+</tr>
+$tag_end
+$tag_end
+$tag_end
+</table></blockquote><br>
+<center><div id="body">
+<input type="submit" value="Commit">
+<input type="reset" value="Reset">
+</id></center><br>
+</table>

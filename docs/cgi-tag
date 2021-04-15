@@ -1,0 +1,147 @@
+
+          Tagging CGI User's Guide
+
+
+EPS's CGI is flexible for developers.
+Do not touch C source codes unless you want to develop a 'POST' method handler.
+All other information delivery can be done automatically by tags!
+
+This document aims to introduce TAG-CGI directives for HTML developers.
+
+Tags are diveded into following types:
+L. list processing: There are tag_list files defined in the web site HTML
+                    template folder(*1). These directives are used to handle
+		    such files, i.e. achieving  value, index, title; create /
+		    destroy temporal list; etc..
+B. block contrlling: These tag directives can be used to control outputting of
+                     the TAG-CGI processor, i.e. recursive outputting,
+		     discarding ignored blocks, etc..
+                     Such directives will occupy whole line, which means texts
+		     after these directives in the same line will be completely
+		     ignored (no processing, no outputting).
+V: value calculating: These tag directives are used to calc logical value that
+                      can be used by the "tag_if" parameter. Please refer
+		      "tag_if" section for details.
+
+Following tags are acceptable in the html file:
+1.  (L) tag_value name
+     Like tag_item, but do not need to specify list name. This function is
+     convenient for achieving values from service_config / session_context /
+     query_strings list.
+     These tag_lists are internal objects for a TAG-CGI:
+         [-] service_config: storing service specific values.
+             session_context(*1): storing session specific values.
+         [+] query_string: query strings from GET methods' URL / POST methods'
+	                   form.
+     [+] means highest priority, [-] means lowest priority. That is, if a
+         'value' has same keyword name in the multiple lists, the one in the
+	 higher priority list will be returned.
+
+2.  (L) tag_item [list], name, [index]
+     Directive to return a cell value filled in the specified list whose "title"
+     in the concerned list should be exactly the value specified by the "name"
+     argument.
+     If "list" is ommitted, the current processing list specified by the latest
+     "tag_for" directive will be concerned. Note that, we could not sepcify
+     "index" when "list" is ommitted.
+     If "index" is ommitted, there must be a processing list with same name in
+     the "tag_for" processing stack whose current processing index will then be
+     concerned.
+
+3.  (L) tag_index [list]
+     Accept parameter to locating tag_list whose name may be list.lst under the
+     service configuration folder.
+     Return current processing index in a "tag_for" block for this list. If the
+     specified list is not included in any of the affective "tag_for" blocks,
+     this directive will return "0".
+
+4.  (L) tag_count [list]
+     Achieve items count for the specified list.
+     If "list" is ommitted, the current processing list specified by the latest
+     "tag_for" directive will be concerned.
+
+5.  (B) tag_include file
+     Include another TAG-CGI template inline.
+     Note that "tag_for" / "tag_if" should not be broken by this directive
+     currently.
+
+6.  (B) tag_for list, [start], [limit]
+     Recursively outputting blocks quoted by this directive and the nearest
+     "tag_end". The output range is specified by the "start" and "limit"
+     arguments.
+     The quoted block will be outputted every time the processing "index" which
+     will be increased from the specified "start" value, up to the "limit"
+     count.
+
+7.  (B) tag_if [logic]
+     Directive to control block outputting logic.
+     "logic" can be boolean value whose value may be followings:
+              "yes": TRUE
+              "true": TRUE
+              "no": FALSE
+              "false": FALSE
+              Values other than "yes" or "true" may be treated as FALSE.
+     [logic] can be string value whose value may be followings:
+              "none": FALSE
+              "null": FALSE
+              "": FALSE
+              Values other than above possibles will be treated as TRUE.
+     [logic] can be integer values, but we do not support this currently.
+     If "logic" is FALSE, TAG-CGI processor will stop to output blocks quoted by
+     this "tag_if" directive and the nearest "tag_end".
+
+8.  (B) tag_end
+     This directive can be used to terminate a tag_for / tag_if block processor.
+     Each tag_for tag_if must have one corresponding tag_end directive,
+     otherwise, TAG-CGI processor may be fell into an unpredictable state.
+
+9.  (V) tag_eq value1, value2
+     If value1 equals value2, this directive will return "yes", otherwise, "no"
+     will be returned. In following cases, "equal" will be considered a result:
+      a. value1 and value2 are both empty string "".
+      b. value1 and value2 are matched case sensitive strings.
+
+10. (V) tag_neq value1, value2
+     If value1 does not equal value2, this directive will return "yes",
+     otherwise, "no" will be returned. In following cases, "equal" will be
+     considered a result:
+      a. value1 and value2 are both empty string "".
+      b. value1 and value2 are matched case sensitive strings.
+
+11. (V) tag_not value
+     If value can be considered logical FALSE, "yes" will be returned,
+     otherwise, "no" will be returned.
+
+12. (V) tag_and value1, value2
+     If both value1 and value2 can be considered logical TRUE, "yes" will be
+     returned, otherwise, "no" will be returned.
+
+13. (V) tag_or value1, value2
+     If either value1 or value2 can be considered logical TRUE, "yes" will be
+     returned, otherwise, "no" will be returned.
+
+Future extensions (whose functionality will also be defined in the future. I
+wrote them here aimed to leave a name for you and idea in my mind :), wish you
+can guess what they can do from those names):
+1.  (B) tag_break
+2.  (B) tag_continue
+3.  (L) tag_title
+4.  (L) tag_new
+5.  (L) tag_delete
+6.  (V) tag_gt
+7.  (V) tag_lt
+8.  (V) tag_gteq
+9.  (V) tag_lteq
+
+*1: template folder: Path of this folder should be a parameter used to pass to
+                     the tag initilization function. You can specify
+		     --with-epscgi value to define a customized folder. If
+		     ommitted, "/share/eps" will be used as a default
+		     alternative.
+*2: session_context: This is a special internal list whose file name will not be
+                     "session_context.lst" since there must be one session
+                     context file per sessiion.
+
+Please see 'htdocs/index.html', guess what will you know from those namings?
+Have fun! :)
+

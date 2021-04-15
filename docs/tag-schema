@@ -1,0 +1,98 @@
+
+          TAG Schema Developer's Guide
+
+
+Combined with HTML user interface, most of CGI scripts are used to manipulating
+local system settings. Consider the work flow showing in the figure below:
+1.  "user" stands for user input from web pages
+2.  "conf" stands for local settings to be manipulated.
+3.  "schema" then is defined to:
+   1.1. FILTER user inputs, validate and transfer them into acceptable values
+        for the target configurations.
+   1.2. FILTER configured values, fixup or ignore some of them that might be
+        viewed by users in the web pages, so that we allow configurables to be
+        constrained as smaller sets what users must be aware of.
+
+                +------+     +--------+     +------+
+                |      |     |        |     |      |
+                | user | <-> | schema | <-> | conf |
+                |      |     |        |     |      |
+                +------+     +--------+     +------+
+                    Fig.1 Schema Positioning
+
+This document aims to introduce the design methodology for schema
+implementators.
+
+Schema file is CSV formatted whose first line is defined as "title" line. Thus,
+in a TAG-CGI system, it is exactly the tag-list itself which can be controlled
+by tag list processing directives. Following functions can be used to get values
+defined in the "schema":
+1.  Get functions: before web page is loaded or user input is committed, schema
+                   value can get from the tag-list pre-set columns by following
+                   functions
+                     "tag_get_item / tag_get_index / tag_get_location"
+2.  Set functions: note that "schema" is read only, we can not manipulate it
+                   once it is online.
+
+Since "user" value is came from web page input, and will be displayed in the
+HTML which is formed by a tag-list processor, we can get and set "user" values
+by following functions:
+1.  Get functions: after user input is committed, user value can be get from
+                   query string by following function
+                     tag_get_value
+2.  Set functions: before web page is reloaded, user display can be reloaded
+                   into tag-list columns by following functions
+                     "tag_set_item / tag_set_cell / tag_set_index /
+	               tag_set_location"
+
+In EPSCGI system, there are parsers for every different formatted configuration
+files. The functions used to get and set "conf" values are depend on the
+"schema" implementators. Note that there are always functions provided by such
+schema parser that can be used achieve configured values:
+1.  eps_slapd_get_value: used for slapd.conf formatted file.
+2.  eps_ssl_get_value: used for openssl configuration files.
+...
+
+There are special "title"s must be defined in the schema files:
+1.  syntax: Which format the value must use. See eps_syntax.c if you want to add
+            a new syntax checker.
+2.  required: Specified as "yes" when "user" value is required (not empty).
+3.  usage: Define which value will be used as default one.
+           "schema": values from schema file will be affective, which means, the
+                     value is fixed up and there is no chance to modify it.
+           "conf": values from configuration file be affective, which means, the
+                   value is ignored and there is no chance for user to modify
+                   the original configured one.
+           "user": this is default, which means user's input is accpetable.
+4.  choice: There is a special syntax called "choice". If such case, the value
+            of this parameter must come from the "value" column of the tag-list
+            file whose name is specified in this column.
+5.  error: this is not nessary in the "schema" file, whenever error occurs,
+           this column will be appended with following values:
+           "syntax": indicating an syntax error.
+           "required": indicating values are required.
+Functions eps_get_valid_value and eps_restore_user_value can be used to validate
+and restore user values. Please find examples by yourself since this is not an
+API manual document :).
+
+Some common "title"s can be also found in most of schema files, they are
+recommendded but not mandantory to be defined in the CSV files.
+1.  param: There is always name-value pair in the HTML forms that must be passed
+           to the CGI scripts. "param" definition is always defined to achieve
+           an unique name in the form data.
+2.  value: There is always name-value pair in the HTML forms that must be passed
+           to the CGI scripts. "value" definition is always defined to store
+           user input when form data is committed or configured value when web
+           page is reloaded.
+3.  name: To offer a user comprehensive name, we always define "name" column to
+          be displayed in the web pages.
+4.  section: Most of configuration files is formatted as section-name-value
+             tree, this column is used to define the section name that the
+	     "value" is concerned.
+             XXX: section can be specified as following format to get a
+                  recursive referrencing:
+                  '[[section-a]attrib-of-a]attrib-of-b'
+5.  attrib: Most of configuration files is formatted as section-name-value tree,
+            this column is used to define the attribute name that the "value" is
+            concerned.
+

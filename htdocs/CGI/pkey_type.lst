@@ -1,0 +1,5 @@
+"value","name"
+"rsa","Rivest Shamir Adleman (RSA)"
+; we do not support following configuration currently
+;"dsa","Digital Signature Algorithm (DSA)"
+;"ec","Elliptic Curve Binary Polynomial (EC)"

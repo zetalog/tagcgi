@@ -1,0 +1,7 @@
+"name","value"
+"images_url","/images"
+"script_url","/democgi/democgi"
+"script_title","Soliton Net'Attest EPS"
+"ssl_install","/etc/openssl"
+"ca_conf","/etc/openssl/openssl.cnf"
+"prefix","/usr/dot1x"
